@@ -14,9 +14,9 @@ export function ValidationBanner({
   let message: string;
 
   if (!hasPhoto && missingCategories.length > 0) {
-    message = 'Upload a photo and pick a style to continue.';
+    message = 'Upload at least one photo and pick a style to continue.';
   } else if (!hasPhoto) {
-    message = 'Upload a photo to get started.';
+    message = 'Upload at least one photo to get started. More angles = better likeness.';
   } else {
     message = 'Pick a style to continue.';
   }

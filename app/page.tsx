@@ -43,8 +43,9 @@ async function readJsonResponse<T = any>(response: Response): Promise<T> {
 
 export default function HeadshotGenerator() {
   const [appState, setAppState] = useState<AppState>('input');
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [photos, setPhotos] = useState<{ file: File; previewUrl: string }[]>(
+    []
+  );
   const [selections, setSelections] = useState<Record<string, string | null>>(
     {}
   );
@@ -52,19 +53,29 @@ export default function HeadshotGenerator() {
   const [error, setError] = useState<string | null>(null);
 
   const missingCategories = getMissingCategories(selections);
-  const isReady = !!photoFile && allRequiredSelected(selections);
+  const hasPhotos = photos.length > 0;
+  const isReady = hasPhotos && allRequiredSelected(selections);
 
-  function handleFileSelect(file: File) {
-    setPhotoFile(file);
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
+  function handleAddPhotos(files: File[]) {
+    const newPhotos = files.map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    }));
+    setPhotos((prev) => [...prev, ...newPhotos]);
     setError(null);
   }
 
-  function handleRemovePhoto() {
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setPhotoFile(null);
-    setPreviewUrl(null);
+  function handleRemovePhoto(index: number) {
+    setPhotos((prev) => {
+      const removed = prev[index];
+      if (removed) URL.revokeObjectURL(removed.previewUrl);
+      return prev.filter((_, i) => i !== index);
+    });
+  }
+
+  function handleClearPhotos() {
+    for (const p of photos) URL.revokeObjectURL(p.previewUrl);
+    setPhotos([]);
   }
 
   function handleSelect(categoryId: string, optionId: string) {
@@ -72,7 +83,7 @@ export default function HeadshotGenerator() {
   }
 
   const handleGenerate = useCallback(async () => {
-    if (!photoFile || !isReady) return;
+    if (!hasPhotos || !isReady) return;
 
     setAppState('generating');
     setError(null);
@@ -83,7 +94,9 @@ export default function HeadshotGenerator() {
     setImages([...placeholders]);
 
     const formData = new FormData();
-    formData.append('photo', photoFile);
+    for (const p of photos) {
+      formData.append('photos', p.file);
+    }
     formData.append('prompts', JSON.stringify(prompts));
 
     try {
@@ -128,14 +141,14 @@ export default function HeadshotGenerator() {
       );
       setAppState('input');
     }
-  }, [photoFile, isReady, selections]);
+  }, [photos, hasPhotos, isReady, selections]);
 
   function handleGenerateMore() {
     handleGenerate();
   }
 
   function handleStartOver() {
-    handleRemovePhoto();
+    handleClearPhotos();
     setSelections({});
     setImages([]);
     setError(null);
@@ -149,7 +162,7 @@ export default function HeadshotGenerator() {
         name: 'AI Headshot Generator',
         icon: AGENT_ICON_DATA_URL,
         description:
-          'Upload a selfie. Pick your style. Get 3 professional headshots.',
+          'Upload up to 3 selfies. Pick your style. Get professional headshots.',
         showStats: false,
         showActions: false,
         theme: defaultTheme,
@@ -168,8 +181,8 @@ export default function HeadshotGenerator() {
         {appState === 'input' && (
           <>
             <PhotoUpload
-              previewUrl={previewUrl}
-              onFileSelect={handleFileSelect}
+              photos={photos}
+              onAddPhotos={handleAddPhotos}
               onRemove={handleRemovePhoto}
             />
 
@@ -187,7 +200,7 @@ export default function HeadshotGenerator() {
             {!isReady && (
               <ValidationBanner
                 missingCategories={missingCategories}
-                hasPhoto={!!photoFile}
+                hasPhoto={hasPhotos}
               />
             )}
 

@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GENERATION_CONFIG } from '@/lib/generation-config';
 
-// Ensure this runs as a Node.js Serverless Function (not Edge)
 export const runtime = 'nodejs';
-// Give image generation more time on Vercel (plan-dependent)
 export const maxDuration = 300;
 
 const GEMINI_MODEL = 'gemini-3-pro-image-preview';
@@ -11,7 +9,9 @@ const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/
 
 type GenerateResult = { image: string | null; error: string | null };
 
-const SOFT_TIME_BUDGET_MS = 50_000; // return partial results before typical timeouts
+type ReferenceImage = { base64: string; mimeType: string };
+
+const SOFT_TIME_BUDGET_MS = 50_000;
 const PER_REQUEST_TIMEOUT_MS = 45_000;
 
 export async function POST(req: NextRequest) {
@@ -25,21 +25,27 @@ export async function POST(req: NextRequest) {
 
   try {
     const formData = await req.formData();
-    const photo = formData.get('photo') as File | null;
+    const photoEntries = formData.getAll('photos') as File[];
     const promptsRaw = formData.get('prompts') as string | null;
 
-    if (!photo || !promptsRaw) {
+    if (photoEntries.length === 0 || !promptsRaw) {
       return NextResponse.json(
-        { success: false, error: 'Missing photo or prompts.' },
+        { success: false, error: 'Missing photos or prompts.' },
         { status: 400 }
       );
     }
 
     const prompts: string[] = JSON.parse(promptsRaw);
 
-    const bytes = await photo.arrayBuffer();
-    const base64 = Buffer.from(bytes).toString('base64');
-    const mimeType = photo.type || 'image/jpeg';
+    const referenceImages: ReferenceImage[] = await Promise.all(
+      photoEntries.map(async (photo) => {
+        const bytes = await photo.arrayBuffer();
+        return {
+          base64: Buffer.from(bytes).toString('base64'),
+          mimeType: photo.type || 'image/jpeg',
+        };
+      })
+    );
 
     const controllers: AbortController[] = [];
     const results: Array<GenerateResult | null> = new Array(prompts.length).fill(null);
@@ -52,7 +58,7 @@ export async function POST(req: NextRequest) {
 
         const timeout = setTimeout(() => controller.abort(), PER_REQUEST_TIMEOUT_MS);
 
-        generateWithNanoBananaPro(apiKey, prompt, base64, mimeType, controller.signal)
+        generateWithNanoBananaPro(apiKey, prompt, referenceImages, controller.signal)
           .then((r) => {
             results[i] = r;
           })
@@ -75,7 +81,6 @@ export async function POST(req: NextRequest) {
       new Promise<void>((resolve) => setTimeout(resolve, SOFT_TIME_BUDGET_MS)),
     ]);
 
-    // Stop any remaining in-flight requests so we can respond before Vercel times out.
     for (const c of controllers) c?.abort();
 
     const images: string[] = [];
@@ -117,10 +122,16 @@ export async function POST(req: NextRequest) {
 async function generateWithNanoBananaPro(
   apiKey: string,
   prompt: string,
-  base64Image: string,
-  mimeType: string,
+  referenceImages: ReferenceImage[],
   signal: AbortSignal
 ): Promise<GenerateResult> {
+  const imageParts = referenceImages.map((img) => ({
+    inline_data: {
+      mime_type: img.mimeType,
+      data: img.base64,
+    },
+  }));
+
   const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -130,12 +141,7 @@ async function generateWithNanoBananaPro(
         {
           parts: [
             { text: prompt },
-            {
-              inline_data: {
-                mime_type: mimeType,
-                data: base64Image,
-              },
-            },
+            ...imageParts,
           ],
         },
       ],
