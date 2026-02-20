@@ -6,6 +6,8 @@ export const maxDuration = 60;
 const GEMINI_MODEL = 'gemini-3-pro-image-preview';
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
+type GenerateResult = { image: string | null; error: string | null };
+
 export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -40,9 +42,17 @@ export async function POST(req: NextRequest) {
     );
 
     const images: string[] = [];
+    const errors: string[] = [];
     for (const result of results) {
-      if (result.status === 'fulfilled' && result.value) {
-        images.push(result.value);
+      if (result.status === 'fulfilled') {
+        if (result.value.image) images.push(result.value.image);
+        if (result.value.error) errors.push(result.value.error);
+      } else {
+        errors.push(
+          result.reason instanceof Error
+            ? result.reason.message
+            : 'Unknown generation error.'
+        );
       }
     }
 
@@ -50,8 +60,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error:
+          error: [
             "We couldn't generate your headshots. Please try again or use a different photo.",
+            errors.length ? `Details: ${errors[0]}` : null,
+          ]
+            .filter(Boolean)
+            .join(' '),
         },
         { status: 500 }
       );
@@ -75,7 +89,7 @@ async function generateWithNanoBananaPro(
   prompt: string,
   base64Image: string,
   mimeType: string
-): Promise<string | null> {
+): Promise<GenerateResult> {
   const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -106,20 +120,24 @@ async function generateWithNanoBananaPro(
   if (!response.ok) {
     const errorText = await response.text();
     console.error(`Gemini API error ${response.status}:`, errorText);
-    return null;
+    return {
+      image: null,
+      error: `Gemini API error (HTTP ${response.status}). ${errorText.trim().slice(0, 300)}`,
+    };
   }
 
   const data = await response.json();
 
   const parts = data.candidates?.[0]?.content?.parts;
-  if (!parts) return null;
+  if (!parts) return { image: null, error: 'Gemini response missing candidates content parts.' };
 
   for (const part of parts) {
-    if (part.inline_data?.data) {
-      const imgMime = part.inline_data.mime_type || 'image/png';
-      return `data:${imgMime};base64,${part.inline_data.data}`;
+    const inline = part.inline_data || part.inlineData;
+    if (inline?.data) {
+      const imgMime = inline.mime_type || inline.mimeType || 'image/png';
+      return { image: `data:${imgMime};base64,${inline.data}`, error: null };
     }
   }
 
-  return null;
+  return { image: null, error: 'Gemini response did not include inline image data.' };
 }

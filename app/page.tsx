@@ -23,6 +23,9 @@ import { buildVariationPrompts } from '@/lib/prompt-builder';
 
 type AppState = 'input' | 'generating' | 'results';
 
+const AGENT_ICON_DATA_URL =
+  'data:image/svg+xml,%3Csvg%20xmlns=%22http%3A//www.w3.org/2000/svg%22%20width=%2296%22%20height=%2296%22%20viewBox=%220%200%2096%2096%22%3E%3Crect%20x=%228%22%20y=%2222%22%20width=%2280%22%20height=%2256%22%20rx=%2214%22%20fill=%22%23f8fafc%22%20stroke=%22%231A3643%22%20stroke-width=%224%22/%3E%3Cpath%20d=%22M30%2022%20l6-8%20h24%20l6%208%22%20fill=%22none%22%20stroke=%22%231A3643%22%20stroke-width=%224%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/%3E%3Ccircle%20cx=%2248%22%20cy=%2250%22%20r=%2216%22%20fill=%22none%22%20stroke=%22%23D96C4F%22%20stroke-width=%224%22/%3E%3Ccircle%20cx=%2248%22%20cy=%2250%22%20r=%226%22%20fill=%22%23D96C4F%22/%3E%3C/svg%3E';
+
 async function readJsonResponse<T = any>(response: Response): Promise<T> {
   const contentType = response.headers.get('content-type') || '';
   const isJson = contentType.includes('application/json');
@@ -144,6 +147,7 @@ export default function HeadshotGenerator() {
       theme={defaultTheme}
       agentHeaderConfig={{
         name: 'AI Headshot Generator',
+        icon: AGENT_ICON_DATA_URL,
         description:
           'Upload a selfie. Pick your look. Get 3 professional headshots.',
         showStats: false,
