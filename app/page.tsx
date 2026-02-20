@@ -23,6 +23,39 @@ import { buildVariationPrompts } from '@/lib/prompt-builder';
 
 type AppState = 'input' | 'generating' | 'results';
 
+const MAX_REF_DIM = 1024;
+const JPEG_QUALITY = 0.85;
+
+function resizeImage(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new window.Image();
+    img.onload = () => {
+      let { width, height } = img;
+      if (width > MAX_REF_DIM || height > MAX_REF_DIM) {
+        const scale = MAX_REF_DIM / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Canvas toBlob failed'));
+        },
+        'image/jpeg',
+        JPEG_QUALITY
+      );
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = () => reject(new Error('Failed to load image for resize'));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 const AGENT_ICON_DATA_URL =
   'data:image/svg+xml,%3Csvg%20xmlns=%22http%3A//www.w3.org/2000/svg%22%20width=%2296%22%20height=%2296%22%20viewBox=%220%200%2096%2096%22%3E%3Crect%20x=%228%22%20y=%2222%22%20width=%2280%22%20height=%2256%22%20rx=%2214%22%20fill=%22%23f8fafc%22%20stroke=%22%231A3643%22%20stroke-width=%224%22/%3E%3Cpath%20d=%22M30%2022%20l6-8%20h24%20l6%208%22%20fill=%22none%22%20stroke=%22%231A3643%22%20stroke-width=%224%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/%3E%3Ccircle%20cx=%2248%22%20cy=%2250%22%20r=%2216%22%20fill=%22none%22%20stroke=%22%23D96C4F%22%20stroke-width=%224%22/%3E%3Ccircle%20cx=%2248%22%20cy=%2250%22%20r=%226%22%20fill=%22%23D96C4F%22/%3E%3C/svg%3E';
 
@@ -94,8 +127,9 @@ export default function HeadshotGenerator() {
     setImages([...placeholders]);
 
     const formData = new FormData();
-    for (const p of photos) {
-      formData.append('photos', p.file);
+    const resized = await Promise.all(photos.map((p) => resizeImage(p.file)));
+    for (let i = 0; i < resized.length; i++) {
+      formData.append('photos', resized[i], `photo-${i}.jpg`);
     }
     formData.append('prompts', JSON.stringify(prompts));
 
