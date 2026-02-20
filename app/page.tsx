@@ -23,6 +23,21 @@ import { buildVariationPrompts } from '@/lib/prompt-builder';
 
 type AppState = 'input' | 'generating' | 'results';
 
+async function readJsonResponse<T = any>(response: Response): Promise<T> {
+  const contentType = response.headers.get('content-type') || '';
+  const isJson = contentType.includes('application/json');
+
+  if (isJson) {
+    return (await response.json()) as T;
+  }
+
+  const text = await response.text();
+  const snippet = text.trim().slice(0, 300);
+  throw new Error(
+    `Non-JSON response from /api/generate (HTTP ${response.status}). ${snippet || 'Empty response.'}`
+  );
+}
+
 export default function HeadshotGenerator() {
   const [appState, setAppState] = useState<AppState>('input');
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -74,11 +89,21 @@ export default function HeadshotGenerator() {
         body: formData,
       });
 
-      const data = await response.json();
+      const data = await readJsonResponse<{
+        success: boolean;
+        images?: string[];
+        error?: string;
+      }>(response);
 
       if (!data.success) {
         throw new Error(
           data.error || 'Generation failed. Please try again.'
+        );
+      }
+
+      if (!Array.isArray(data.images)) {
+        throw new Error(
+          'Generation failed: server returned an invalid response shape (missing images array).'
         );
       }
 
