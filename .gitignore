@@ -1,0 +1,19 @@
+.DS_Store
+*.log
+
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+
+# env (never commit secrets)
+.env.local
+
+# misc
+.vercel/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

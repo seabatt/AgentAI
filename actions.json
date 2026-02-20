@@ -1,0 +1,510 @@
+[
+    {
+      "label": "Get User Input",
+      "type": "get_user_input",
+      "icon": "🧑‍💻",
+      "category": "Inputs & Data Retrieval",
+      "tooltip": "Capture user input with options like text, numbers, URLs, and dropdowns, to collect dynamic responses.",
+      "inputs": [
+        {
+          "type": "dropdown",
+          "value": "textarea",
+          "name": "input_type",
+          "label": "Input Type",
+          "required": true,
+          "hint": "Choose the type of input you want to capture from the user, such as text, number, or dropdown selection. For example, select 'Text' for open-ended input, 'URL' for web links, or 'Yes/No' for binary responses.",
+          "options": [
+            {
+              "label": "Text",
+              "value": "text"
+            },
+            {
+              "label": "Number",
+              "value": "number"
+            },
+            {
+              "label": "Yes/No",
+              "value": "boolean"
+            },
+            {
+              "label": "Text Area",
+              "value": "textarea"
+            },
+            {
+              "label": "URL",
+              "value": "URL"
+            },
+            {
+              "label": "Website Domain",
+              "value": "website_domain"
+            },
+            {
+              "label": "Dropdown (single)",
+              "value": "dropdown (single)"
+            },
+            {
+              "label": "Dropdown (multiple)",
+              "value": "dropdown (multiple)"
+            },
+            {
+              "label": "Multi-Item Selector",
+              "value": "multi_item_selector"
+            },
+            {
+              "label": "Multi-Item Selector (Table View)",
+              "value": "multi_item_selector_table"
+            },
+            {
+              "label": "Radio Select (single)",
+              "value": "radio"
+            },
+            {
+              "label": "HubSpot Portal",
+              "value": "HubSpot Portal"
+            },
+            {
+              "label": "HubSpot Company",
+              "value": "HubSpot Company"
+            },
+            {
+              "label": "Knowledge Base",
+              "value": "Knowledge Base"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "Description of image to generate ",
+          "name": "input_description",
+          "label": "Input Label",
+          "hint": "Write a clear prompt to guide users on what information is required. For example, 'Please enter your email address' or 'Select your preferred contact method.'",
+          "required": true
+        },
+        {
+          "type": "text",
+          "value": "",
+          "name": "default_value",
+          "label": "Default Value",
+          "hint": "Provide a default response that appears automatically, guiding users or simplifying input. For example, 'example@domain.com' for an email field.",
+          "required": false
+        },
+        {
+          "type": "checkbox",
+          "value": true,
+          "name": "required",
+          "label": "Required?",
+          "hint": "Mark this checkbox if this input is mandatory. For example, enable it if a response is essential to proceed in the workflow.",
+          "required": false
+        },
+        {
+          "type": "text",
+          "value": "user_input",
+          "name": "input_name",
+          "label": "Output Variable Name",
+          "hint": "Assign a unique variable name for the input value, such as 'user_email' or 'preferred_contact', which you can reference later in the workflow. No spaces or special characters, spaces, or dashes are allowed.",
+          "validation": {
+            "regex": "^[a-zA-Z][a-zA-Z0-9_]*$",
+            "message": "Variable names must start with a letter and can only contain letters, numbers, and underscores (_)."
+          },
+          "required": true,
+          "showInsertVariables": false
+        }
+      ],
+      "id": "918e1ad5-5ea6-424c-911f-a46bd8a88317",
+      "order": 0
+    },
+    {
+      "label": "Generate Content",
+      "type": "invoke_llm",
+      "icon": "📝",
+      "category": "AI & Content Generation",
+      "tooltip": "Generate text based on your input prompts.",
+      "keywords": [
+        "llm",
+        "ai",
+        "gpt",
+        "chatgpt"
+      ],
+      "inputs": [
+        {
+          "type": "dropdown",
+          "grouped": true,
+          "value": "gemini-2.5-flash-image-preview",
+          "name": "llm_engine",
+          "label": "LLM Engine",
+          "required": true,
+          "hint": "Choose the language model to use, such as 'GPT-4o' for detailed responses or 'Claude Opus' for creative writing.",
+          "groupedOptions": {
+            "none": [
+              {
+                "label": "Auto Optimized",
+                "description": "Automatically selects the best model for your task",
+                "value": "auto",
+                "showAttachments": true,
+                "structuredOutputs": true
+              }
+            ],
+            "OpenAI": [
+              {
+                "label": "GPT-5",
+                "description": "Smartest model for coding, reasoning, and agentic tasks across domains",
+                "value": "gpt-5",
+                "showAttachments": true,
+                "structuredOutputs": true
+              },
+              {
+                "label": "GPT-5 mini",
+                "description": "A faster, more cost-efficient version of GPT-5, great for well-defined tasks and precise prompts",
+                "value": "gpt-5-mini",
+                "showAttachments": true,
+                "structuredOutputs": true
+              },
+              {
+                "label": "GPT-5-nano",
+                "description": "Our fastest, cheapest version of GPT-5, great for summarization and classification tasks",
+                "value": "gpt-5-nano",
+                "showAttachments": true,
+                "structuredOutputs": true
+              },
+              {
+                "label": "GPT-4.1",
+                "description": "Smartest model for complex tasks, also supports images and text inputs",
+                "value": "gpt-4.1",
+                "showAttachments": true,
+                "structuredOutputs": true
+              },
+              {
+                "label": "GPT-4o",
+                "description": "High-performance model for complex reasoning and tasks",
+                "value": "gpt4o",
+                "showAttachments": true,
+                "structuredOutputs": true
+              },
+              {
+                "label": "GPT-4o-Mini",
+                "description": "Efficient model for general-purpose tasks with faster responses",
+                "value": "gpt-4o-mini",
+                "showAttachments": true,
+                "structuredOutputs": true
+              },
+              {
+                "label": "OpenAI o3",
+                "description": "The best thinking model suitable for deep reasoning tasks",
+                "value": "o3",
+                "showAttachments": false,
+                "structuredOutputs": true
+              },
+              {
+                "label": "OpenAI o3 Mini",
+                "description": "Thinking model suitable for fast and advanced tasks",
+                "value": "o3-mini",
+                "showAttachments": false,
+                "structuredOutputs": true
+              },
+              {
+                "label": "OpenAI o3 Pro",
+                "description": "Most advanced thinking model suitable for advanced tasks",
+                "value": "o3-pro",
+                "showAttachments": false,
+                "structuredOutputs": true
+              },
+              {
+                "label": "OpenAI o4 Mini",
+                "description": "Thinking model suitable for fast and advanced tasks",
+                "value": "o4-mini",
+                "showAttachments": false,
+                "structuredOutputs": true
+              }
+            ],
+            "Anthropic": [
+              {
+                "label": "Claude Sonnet 4",
+                "description": "Anthropic's most capable and intelligent model yet",
+                "value": "claude-sonnet-4-20250514",
+                "showAttachments": false
+              },
+              {
+                "label": "Claude Opus 4",
+                "description": "Anthropic's high-performance model with exceptional reasoning and efficiency",
+                "value": "claude-opus-4-20250514",
+                "showAttachments": false
+              },
+              {
+                "label": "Claude 3.7 Sonnet",
+                "description": "Deprecated - switch to Claude Sonnet 4",
+                "value": "claude_sonnet_37",
+                "showAttachments": false,
+                "disabled": true
+              },
+              {
+                "label": "Claude 3.5 Sonnet",
+                "description": "Deprecated - switch to Claude Sonnet 4",
+                "value": "claude_sonnet_35",
+                "showAttachments": false,
+                "disabled": true
+              },
+              {
+                "label": "Claude 3.5 Sonnet Multi-Modal",
+                "description": "Deprecated - switch to Claude Sonnet 4",
+                "value": "claude_sonnet_35_vision",
+                "showAttachments": false,
+                "disabled": true
+              },
+              {
+                "label": "Claude Opus 3",
+                "description": "Deprecated - switch to Claude Sonnet 4",
+                "value": "claude_opus",
+                "showAttachments": false,
+                "disabled": true
+              }
+            ],
+            "Google": [
+              {
+                "label": "Gemini 2.5 Pro",
+                "description": "Best Google model for world knowledge, code, and long text",
+                "value": "gemini-2.5-pro-preview-05-06",
+                "showAttachments": false
+              },
+              {
+                "label": "Gemini 2.5 Flash",
+                "description": "Best Google model cost effective adaptive thinking",
+                "value": "gemini-2.5-flash-preview-04-17",
+                "showAttachments": false
+              },
+              {
+                "label": "Gemini 2.0 Flash Preview Image Generation",
+                "description": "Best image generation model",
+                "value": "gemini-2.0-flash-preview-image-generation",
+                "showAttachments": false
+              },
+              {
+                "label": "Gemini 2.0 Flash Experimental Image Generation",
+                "description": "Deprecating soon - Switch to Gemini 2.0 Flash Image Generation",
+                "value": "gemini-2.0-flash-exp-image-generation",
+                "showAttachments": false
+              },
+              {
+                "label": "Gemini 2.0 Pro",
+                "description": "Second best Google model for world knowledge, code, and long text",
+                "value": "gemini-2.0-pro-exp-02-05",
+                "showAttachments": false
+              },
+              {
+                "label": "Gemini 2.0 Flash",
+                "description": "Fast and efficient model for real-time applications",
+                "value": "gemini-2.0-flash-exp",
+                "showAttachments": false
+              },
+              {
+                "label": "Gemini 2.0 Flash Thinking Mode",
+                "description": "Enhanced reasoning capabilities for complex problem-solving",
+                "value": "gemini-2.0-flash-thinking-exp-1219",
+                "showAttachments": false
+              },
+              {
+                "label": "Gemini 1.5 Pro",
+                "description": "Professional-grade model for detailed and accurate outputs",
+                "value": "gemini_15_pro",
+                "showAttachments": false
+              },
+              {
+                "label": "Gemini 1.5 Flash",
+                "description": "Optimized for speed, suitable for quick information retrieval",
+                "value": "gemini_15_flash",
+                "showAttachments": false
+              }
+            ],
+            "Perplexity (with search access)": [
+              {
+                "label": "Perplexity",
+                "description": "Ideal for tasks requiring high creativity and diverse outputs while using live Internet Search",
+                "value": "perplexity",
+                "showAttachments": false
+              },
+              {
+                "label": "Perplexity Deep Research",
+                "description": "Deep research model that analyzes hundreds of sources, delivering expert-level insights in minutes",
+                "value": "perplexity-deep-research",
+                "showAttachments": false
+              }
+            ],
+            "Google (Open Source)": [
+              {
+                "label": "Gemma2 9B It",
+                "description": "Enhanced version for more complex Italian language applications",
+                "value": "gemma2-9b-it",
+                "showAttachments": false
+              }
+            ],
+            "DeepSeek": [
+              {
+                "label": "DeepSeek R1",
+                "description": "Optimized for tasks requiring high accuracy and detail",
+                "value": "deepseek-r1-distill-llama-70b",
+                "showAttachments": false
+              }
+            ],
+            "Meta": [
+              {
+                "label": "Llama 4 Scout 17B (latest)",
+                "description": "Versatile model excelling in both language and mathematical tasks",
+                "value": "meta-llama/llama-4-scout-17b-16e-instruct",
+                "showAttachments": false
+              }
+            ],
+            "Legacy Models Soon To Be Deprecated": [
+              {
+                "label": "GPT-4.5",
+                "description": "Deprecating soon - Switch to GPT-4.1",
+                "value": "gpt45",
+                "showAttachments": true,
+                "structuredOutputs": true
+              },
+              {
+                "label": "GPT-4 Vision",
+                "description": "Deprecated - switch to GPT-4.1 for vision tasks",
+                "value": "gpt_4v",
+                "showAttachments": false,
+                "disabled": true
+              },
+              {
+                "label": "OpenAI o1",
+                "description": "Deprecating soon - switch to Open AI o3",
+                "value": "o1",
+                "showAttachments": false,
+                "structuredOutputs": true
+              },
+              {
+                "label": "OpenAI o1 Mini",
+                "description": "Deprecating soon - switch to Open AI o3",
+                "value": "o1-mini",
+                "showAttachments": false,
+                "structuredOutputs": true
+              },
+              {
+                "label": "OpenAI o1-pro",
+                "description": "Deprecating soon, switch to Open AI o3",
+                "value": "o1-pro",
+                "showAttachments": false,
+                "structuredOutputs": true
+              },
+              {
+                "label": "Llama 3.3 70B",
+                "description": "Deprecating soon, switch to LLama 4 Scout",
+                "value": "llama-3.3-70b-versatile",
+                "showAttachments": false
+              },
+              {
+                "label": "Gemma 7B It",
+                "description": "Deprecated - switch to Gemma2 9B It",
+                "value": "gemma-7b-it",
+                "showAttachments": false,
+                "disabled": true
+              }
+            ]
+          }
+        },
+        {
+          "type": "textarea",
+          "value": "{{user_input}}",
+          "name": "instructions",
+          "label": "Instructions",
+          "hint": "Enter detailed instructions for the language model, such as 'Write a summary of the document' or 'Create an engaging email subject line.'",
+          "required": true
+        },
+        {
+          "type": "multi-select-checkbox",
+          "value": [],
+          "name": "knowledge_bases",
+          "label": "Select Attachment(s) for LLM Assistant (uploaded to Knowledge Base)",
+          "hint": "",
+          "placeholder": "Select...",
+          "required": false,
+          "options": []
+        },
+        {
+          "type": "text",
+          "value": "results",
+          "name": "output_variable_name",
+          "label": "Output Variable Name",
+          "hint": "Assign a variable name to store the generated text, like 'llm_output' or 'ai_generated_text'.",
+          "validation": {
+            "regex": "^[a-zA-Z][a-zA-Z0-9_]*$",
+            "message": "Variable names must start with a letter and can only contain letters, numbers, and underscores (_)."
+          },
+          "required": true
+        }
+      ],
+      "id": "877677ae-bb12-4a6e-821a-283d42ecb665",
+      "order": 1
+    },
+    {
+      "label": "Show User Output",
+      "type": "output_formatter",
+      "icon": "🖥️",
+      "category": "Outputs",
+      "tooltip": "Display results as HTML, JSON, or tables.",
+      "inputs": [
+        {
+          "type": "text",
+          "value": "Output",
+          "name": "heading",
+          "label": "Heading",
+          "hint": "Provide a heading for the output display, such as 'User Results' or 'Analysis Summary'.",
+          "required": false
+        },
+        {
+          "type": "textarea",
+          "value": "<img src=\"{{results}}\" alt=\"{{user_input}}\" />",
+          "name": "output_formatted",
+          "label": "Output Formatted",
+          "hint": "Enter the formatted output, such as '<h1>Results</h1><p>Details go here</p>' for HTML or 'key: value' for JSON-like displays.",
+          "required": true
+        },
+        {
+          "type": "dropdown",
+          "value": "html",
+          "name": "format",
+          "label": "Format",
+          "required": true,
+          "hint": "Select the format for output display, such as 'HTML', 'JSON', 'Table', or 'Markdown'.",
+          "options": [
+            {
+              "label": "Auto",
+              "value": "auto"
+            },
+            {
+              "label": "iFrame",
+              "value": "iframe"
+            },
+            {
+              "label": "HTML",
+              "value": "html"
+            },
+            {
+              "label": "JSON",
+              "value": "json"
+            },
+            {
+              "label": "Table",
+              "value": "table"
+            },
+            {
+              "label": "Markdown",
+              "value": "markdown"
+            },
+            {
+              "label": "Audio",
+              "value": "audio"
+            },
+            {
+              "label": "Text",
+              "value": "text"
+            }
+          ]
+        }
+      ],
+      "id": "add9521f-3a2d-4839-a1c9-b31d5fc24e58",
+      "order": 2
+    }
+  ]
