@@ -15,98 +15,94 @@ export interface SelectionCategory {
 
 export const HEADSHOT_CATEGORIES: SelectionCategory[] = [
   {
-    id: 'backdrop',
-    title: 'Backdrop',
+    id: 'style',
+    title: 'Choose your style',
     required: true,
     columns: 4,
     options: [
       {
-        id: 'day-city',
-        label: 'Day City',
-        icon: '🏙️',
-        promptFragment: 'daytime city skyline backdrop, soft natural light',
-      },
-      {
-        id: 'night-city',
-        label: 'Night City',
-        icon: '🌃',
-        promptFragment: 'nighttime city lights backdrop, moody ambient lighting',
-      },
-      {
-        id: 'day-outdoors',
-        label: 'Day Outdoors',
-        icon: '🏞️',
-        promptFragment: 'outdoor natural landscape backdrop, golden hour sunlight',
-      },
-      {
-        id: 'dusk-outdoors',
-        label: 'Dusk Outdoors',
-        icon: '🌅',
-        promptFragment: 'dusk outdoor setting, warm sunset tones',
-      },
-    ],
-  },
-  {
-    id: 'attire',
-    title: 'Attire',
-    required: true,
-    columns: 4,
-    options: [
-      {
-        id: 'button-down',
-        label: 'Button Down',
+        id: 'formal',
+        label: 'Formal',
         icon: '👔',
-        promptFragment: 'wearing a crisp button-down shirt',
+        promptFragment:
+          'wearing a dark formal suit, studio lighting, neutral gray backdrop, polished corporate headshot',
       },
       {
-        id: 'suit-tie',
-        label: 'Suit & Tie',
-        icon: '🤵',
-        promptFragment: 'wearing a tailored suit and tie',
+        id: 'casual',
+        label: 'Casual',
+        icon: '😊',
+        promptFragment:
+          'wearing a relaxed casual outfit, soft natural light, blurred outdoor background, approachable and friendly',
       },
       {
-        id: 'blouse',
-        label: 'Blouse',
-        icon: '👩‍💼',
-        promptFragment: 'wearing a professional blouse',
+        id: 'natural',
+        label: 'Natural',
+        icon: '🌿',
+        promptFragment:
+          'minimal styling, lush outdoor greenery backdrop, warm golden-hour sunlight, authentic and effortless',
       },
       {
-        id: 'cocktail-dress',
-        label: 'Cocktail Dress',
-        icon: '👗',
-        promptFragment: 'wearing an elegant cocktail dress',
-      },
-    ],
-  },
-  {
-    id: 'color',
-    title: 'Color',
-    required: true,
-    columns: 4,
-    options: [
-      {
-        id: 'black',
-        label: 'Black',
-        icon: '⬛',
-        promptFragment: 'in black',
+        id: 'corporate',
+        label: 'Corporate',
+        icon: '🏢',
+        promptFragment:
+          'professional business attire, clean white backdrop, even studio lighting, sharp and polished',
       },
       {
-        id: 'white',
-        label: 'White',
-        icon: '⬜',
-        promptFragment: 'in white',
+        id: 'fashion',
+        label: 'Fashion',
+        icon: '✨',
+        promptFragment:
+          'trendy editorial streetwear, dramatic directional lighting, urban backdrop with cinematic bokeh',
       },
       {
-        id: 'blue',
-        label: 'Blue',
-        icon: '🟦',
-        promptFragment: 'in blue',
+        id: 'office',
+        label: 'Office',
+        icon: '💼',
+        promptFragment:
+          'smart casual attire, modern office environment in background, warm interior lighting, approachable professional',
       },
       {
-        id: 'red',
-        label: 'Red',
-        icon: '🟥',
-        promptFragment: 'in red',
+        id: 'yearbook',
+        label: 'Yearbook',
+        icon: '🎓',
+        promptFragment:
+          'classic portrait style, traditional mottled blue-gray studio backdrop, soft fill light, timeless school portrait',
+      },
+      {
+        id: 'luxury',
+        label: 'Luxury',
+        icon: '🖤',
+        promptFragment:
+          'upscale designer attire, dark moody backdrop, dramatic Rembrandt lighting, elegant and refined',
+      },
+      {
+        id: 'street',
+        label: 'Street',
+        icon: '🏙️',
+        promptFragment:
+          'casual street style clothing, urban city environment, natural daylight, candid editorial feel',
+      },
+      {
+        id: 'mono',
+        label: 'Mono',
+        icon: '⚫',
+        promptFragment:
+          'black and white photograph, high contrast, studio lighting, timeless monochrome portrait',
+      },
+      {
+        id: 'xmas',
+        label: 'Xmas',
+        icon: '🎄',
+        promptFragment:
+          'festive holiday setting, warm red and green tones, cozy bokeh lights, cheerful holiday portrait',
+      },
+      {
+        id: 'vintage',
+        label: 'Vintage',
+        icon: '📷',
+        promptFragment:
+          'retro film look, warm muted earthy tones, soft focus, classic attire, nostalgic analog photography feel',
       },
     ],
   },

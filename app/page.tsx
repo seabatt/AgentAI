@@ -149,7 +149,7 @@ export default function HeadshotGenerator() {
         name: 'AI Headshot Generator',
         icon: AGENT_ICON_DATA_URL,
         description:
-          'Upload a selfie. Pick your look. Get 3 professional headshots.',
+          'Upload a selfie. Pick your style. Get 3 professional headshots.',
         showStats: false,
         showActions: false,
         theme: defaultTheme,
