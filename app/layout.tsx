@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: 'AI Headshot Generator | Agent.ai',
@@ -13,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body style={{ margin: 0 }}>{children}</body>
+      <body style={{ margin: 0 }}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
