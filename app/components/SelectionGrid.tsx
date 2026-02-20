@@ -30,7 +30,7 @@ export function SelectionGrid({
       </Text>
       <SimpleGrid
         columns={{ base: 2, md: category.columns }}
-        spacing={3}
+        gap={3}
       >
         {category.options.map((option) => (
           <SelectionCard

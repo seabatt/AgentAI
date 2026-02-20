@@ -45,7 +45,7 @@ export function ResultsDisplay({
         Your Headshots
       </Text>
 
-      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} mb={6}>
+      <SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mb={6}>
         {images.map((img, i) => (
           <Box
             key={i}
