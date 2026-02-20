@@ -1,6 +1,7 @@
 'use client';
 
-import { Box, Text, SimpleGrid } from '@chakra-ui/react';
+import { SimpleGrid } from '@chakra-ui/react';
+import { AgentAISection } from '@agentai/appsdk';
 import { SelectionCard } from './SelectionCard';
 import type { SelectionCategory } from '@/lib/headshot-config';
 
@@ -16,18 +17,7 @@ export function SelectionGrid({
   onSelect,
 }: SelectionGridProps) {
   return (
-    <Box mb={6}>
-      <Text
-        fontSize="16px"
-        fontWeight="700"
-        color="#0f172a"
-        textAlign="center"
-        mb={4}
-        m={0}
-        pb={4}
-      >
-        {category.title}
-      </Text>
+    <AgentAISection title={category.title} accent="blue">
       <SimpleGrid
         columns={{ base: 2, md: category.columns }}
         gap={3}
@@ -42,6 +32,6 @@ export function SelectionGrid({
           />
         ))}
       </SimpleGrid>
-    </Box>
+    </AgentAISection>
   );
 }

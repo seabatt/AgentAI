@@ -1,7 +1,14 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Box, Button, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
+import {
+  AgentAIAgentPage,
+  AgentAIAgentPageSection,
+  AgentAIAlert,
+  AgentAIButton,
+  defaultTheme,
+} from '@agentai/appsdk';
 import { PhotoUpload } from './components/PhotoUpload';
 import { SelectionGrid } from './components/SelectionGrid';
 import { ValidationBanner } from './components/ValidationBanner';
@@ -108,56 +115,27 @@ export default function HeadshotGenerator() {
   }
 
   return (
-    <Box
-      minH="100vh"
-      bg="#f1f5f9"
-      display="flex"
-      alignItems="flex-start"
-      justifyContent="center"
-      py={{ base: 4, md: 10 }}
-      px={4}
+    <AgentAIAgentPage
+      theme={defaultTheme}
+      agentHeaderConfig={{
+        name: 'AI Headshot Generator',
+        description:
+          'Upload a selfie. Pick your look. Get 3 professional headshots.',
+        showStats: false,
+        showActions: false,
+        theme: defaultTheme,
+      }}
+      maxWidth="720px"
     >
-      <Box
-        bg="white"
-        borderRadius="16px"
-        boxShadow="0 4px 6px rgba(0, 0, 0, 0.07)"
-        maxW="520px"
-        w="100%"
-        p={{ base: 5, md: 8 }}
-      >
-        {/* Header */}
-        <Box textAlign="center" mb={6}>
-          <Text
-            fontSize="22px"
-            fontWeight="700"
-            color="#0f172a"
-            m={0}
-            mb={1}
-          >
-            AI Headshot Generator
-          </Text>
-          <Text fontSize="14px" color="#64748b" m={0}>
-            Upload a selfie. Pick your look. Get 3 professional headshots.
-          </Text>
-        </Box>
-
-        {/* Error */}
+      <AgentAIAgentPageSection spacing={6}>
         {error && (
-          <Box
-            bg="#fef2f2"
-            border="1px solid #fecaca"
-            borderRadius="8px"
-            px={4}
-            py={3}
-            mb={4}
-          >
-            <Text fontSize="14px" color="#991b1b" m={0}>
-              {error}
-            </Text>
-          </Box>
+          <AgentAIAlert
+            status="error"
+            title="Something went wrong"
+            description={error}
+          />
         )}
 
-        {/* Input State */}
         {appState === 'input' && (
           <>
             <PhotoUpload
@@ -166,14 +144,16 @@ export default function HeadshotGenerator() {
               onRemove={handleRemovePhoto}
             />
 
-            {HEADSHOT_CATEGORIES.map((category) => (
-              <SelectionGrid
-                key={category.id}
-                category={category}
-                selectedId={selections[category.id] ?? null}
-                onSelect={(optionId) => handleSelect(category.id, optionId)}
-              />
-            ))}
+            <Box display="flex" flexDirection="column" gap={6}>
+              {HEADSHOT_CATEGORIES.map((category) => (
+                <SelectionGrid
+                  key={category.id}
+                  category={category}
+                  selectedId={selections[category.id] ?? null}
+                  onSelect={(optionId) => handleSelect(category.id, optionId)}
+                />
+              ))}
+            </Box>
 
             {!isReady && (
               <ValidationBanner
@@ -182,29 +162,17 @@ export default function HeadshotGenerator() {
               />
             )}
 
-            <Button
+            <AgentAIButton
+              variant="primary"
+              size="lg"
+              isDisabled={!isReady}
               onClick={handleGenerate}
-              disabled={!isReady}
-              w="100%"
-              py={6}
-              mt={2}
-              bg={isReady ? '#3b82f6' : '#cbd5e0'}
-              color="white"
-              borderRadius="10px"
-              fontSize="16px"
-              fontWeight="600"
-              cursor={isReady ? 'pointer' : 'not-allowed'}
-              border="none"
-              transition="all 0.15s ease"
-              _hover={isReady ? { bg: '#2563eb' } : undefined}
-              textAlign="center"
             >
-              Generate Headshot 📸
-            </Button>
+              Generate headshots
+            </AgentAIButton>
           </>
         )}
 
-        {/* Generating State */}
         {appState === 'generating' && (
           <ResultsDisplay
             images={images}
@@ -214,7 +182,6 @@ export default function HeadshotGenerator() {
           />
         )}
 
-        {/* Results State */}
         {appState === 'results' && (
           <ResultsDisplay
             images={images}
@@ -223,7 +190,7 @@ export default function HeadshotGenerator() {
             onStartOver={handleStartOver}
           />
         )}
-      </Box>
-    </Box>
+      </AgentAIAgentPageSection>
+    </AgentAIAgentPage>
   );
 }

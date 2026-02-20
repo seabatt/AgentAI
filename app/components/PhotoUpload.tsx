@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { Box, Text, Image, Flex } from '@chakra-ui/react';
+import { AgentAIButton } from '@agentai/appsdk';
 import { LuX, LuUpload } from 'react-icons/lu';
 
 interface PhotoUploadProps {
@@ -64,25 +65,13 @@ export function PhotoUpload({
             </Box>
           </Flex>
         </Box>
-        <Box
-          as="button"
-          onClick={() => inputRef.current?.click()}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          w="100%"
-          mt={4}
-          py={3}
-          border="1px solid #e2e8f0"
-          borderRadius="8px"
-          bg="white"
-          cursor="pointer"
-          fontSize="14px"
-          fontWeight="500"
-          color="#334155"
-          _hover={{ bg: '#f8fafc' }}
-        >
-          Choose different image
+        <Box mt={4}>
+          <AgentAIButton
+            variant="tertiary"
+            onClick={() => inputRef.current?.click()}
+          >
+            Choose different image
+          </AgentAIButton>
         </Box>
         <input
           ref={inputRef}
