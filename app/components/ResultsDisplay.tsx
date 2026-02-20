@@ -7,14 +7,12 @@ import { AgentAIButton, AgentAISection } from '@agentai/appsdk';
 interface ResultsDisplayProps {
   images: (string | null)[];
   isGenerating: boolean;
-  onGenerateMore: () => void;
   onStartOver: () => void;
 }
 
 export function ResultsDisplay({
   images,
   isGenerating,
-  onGenerateMore,
   onStartOver,
 }: ResultsDisplayProps) {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -82,11 +80,8 @@ export function ResultsDisplay({
           <AgentAIButton variant="primary" size="lg" onClick={handleDownload}>
             Download high-res
           </AgentAIButton>
-          <AgentAIButton variant="tertiary" onClick={onGenerateMore}>
-            Generate more
-          </AgentAIButton>
-          <AgentAIButton variant="link" onClick={onStartOver}>
-            Start over
+          <AgentAIButton variant="tertiary" onClick={onStartOver}>
+            Try a different style
           </AgentAIButton>
         </Flex>
       )}

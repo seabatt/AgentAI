@@ -143,12 +143,7 @@ export default function HeadshotGenerator() {
     }
   }, [photos, hasPhotos, isReady, selections]);
 
-  function handleGenerateMore() {
-    handleGenerate();
-  }
-
   function handleStartOver() {
-    handleClearPhotos();
     setSelections({});
     setImages([]);
     setError(null);
@@ -219,7 +214,6 @@ export default function HeadshotGenerator() {
           <ResultsDisplay
             images={images}
             isGenerating={true}
-            onGenerateMore={handleGenerateMore}
             onStartOver={handleStartOver}
           />
         )}
@@ -228,7 +222,6 @@ export default function HeadshotGenerator() {
           <ResultsDisplay
             images={images}
             isGenerating={false}
-            onGenerateMore={handleGenerateMore}
             onStartOver={handleStartOver}
           />
         )}
