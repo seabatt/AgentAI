@@ -43,7 +43,7 @@ A custom web application built with the Agent.ai App SDK and hosted on Vercel (O
 3. App generates 3 professional headshot variations using Google Gemini (Nano Banana Pro) with the photo as a reference image
 4. User selects their favorite and downloads in high resolution
 
-**One-sentence summary:** Upload a selfie, pick your look, get 3 professional headshots in under a minute.
+**One-sentence summary:** Upload a 1-3 selfies, pick your look, get 3 professional headshots in under a minute.
 
 ### Success Metrics
 

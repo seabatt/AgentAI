@@ -18,14 +18,14 @@ export const HEADSHOT_CATEGORIES: SelectionCategory[] = [
     id: 'style',
     title: 'Choose your style',
     required: true,
-    columns: 4,
+    columns: 3,
     options: [
       {
-        id: 'formal',
-        label: 'Formal',
-        icon: '👔',
+        id: 'natural',
+        label: 'Natural',
+        icon: '🌿',
         promptFragment:
-          'wearing a dark formal suit, studio lighting, neutral gray backdrop, polished corporate headshot',
+          'minimal styling, lush outdoor greenery backdrop, warm golden-hour sunlight, authentic and effortless',
       },
       {
         id: 'casual',
@@ -35,46 +35,18 @@ export const HEADSHOT_CATEGORIES: SelectionCategory[] = [
           'wearing a relaxed casual outfit, soft natural light, blurred outdoor background, approachable and friendly',
       },
       {
-        id: 'natural',
-        label: 'Natural',
-        icon: '🌿',
+        id: 'mono',
+        label: 'Mono',
+        icon: '⚫',
         promptFragment:
-          'minimal styling, lush outdoor greenery backdrop, warm golden-hour sunlight, authentic and effortless',
+          'black and white photograph, high contrast, studio lighting, timeless monochrome portrait',
       },
       {
-        id: 'corporate',
-        label: 'Corporate',
-        icon: '🏢',
+        id: 'vintage',
+        label: 'Vintage',
+        icon: '📷',
         promptFragment:
-          'professional business attire, clean white backdrop, even studio lighting, sharp and polished',
-      },
-      {
-        id: 'fashion',
-        label: 'Fashion',
-        icon: '✨',
-        promptFragment:
-          'trendy editorial streetwear, dramatic directional lighting, urban backdrop with cinematic bokeh',
-      },
-      {
-        id: 'office',
-        label: 'Office',
-        icon: '💼',
-        promptFragment:
-          'smart casual attire, modern office environment in background, warm interior lighting, approachable professional',
-      },
-      {
-        id: 'yearbook',
-        label: 'Yearbook',
-        icon: '🎓',
-        promptFragment:
-          'classic portrait style, traditional mottled blue-gray studio backdrop, soft fill light, timeless school portrait',
-      },
-      {
-        id: 'luxury',
-        label: 'Luxury',
-        icon: '🖤',
-        promptFragment:
-          'upscale designer attire, dark moody backdrop, dramatic Rembrandt lighting, elegant and refined',
+          'retro film look, warm muted earthy tones, soft focus, classic attire, nostalgic analog photography feel',
       },
       {
         id: 'street',
@@ -84,25 +56,32 @@ export const HEADSHOT_CATEGORIES: SelectionCategory[] = [
           'casual street style clothing, urban city environment, natural daylight, candid editorial feel',
       },
       {
-        id: 'mono',
-        label: 'Mono',
-        icon: '⚫',
+        id: 'corporate',
+        label: 'Corporate',
+        icon: '🏢',
         promptFragment:
-          'black and white photograph, high contrast, studio lighting, timeless monochrome portrait',
+          'professional business attire, clean white backdrop, even studio lighting, sharp and polished',
       },
       {
-        id: 'xmas',
-        label: 'Xmas',
-        icon: '🎄',
+        id: 'office',
+        label: 'Office',
+        icon: '💼',
         promptFragment:
-          'festive holiday setting, warm red and green tones, cozy bokeh lights, cheerful holiday portrait',
+          'smart casual attire, modern office environment in background, warm interior lighting, approachable professional',
       },
       {
-        id: 'vintage',
-        label: 'Vintage',
-        icon: '📷',
+        id: 'luxury',
+        label: 'Luxury',
+        icon: '🖤',
         promptFragment:
-          'retro film look, warm muted earthy tones, soft focus, classic attire, nostalgic analog photography feel',
+          'upscale designer attire, dark moody backdrop, dramatic Rembrandt lighting, elegant and refined',
+      },
+      {
+        id: 'fashion',
+        label: 'Fashion',
+        icon: '✨',
+        promptFragment:
+          'trendy editorial streetwear, dramatic directional lighting, urban backdrop with cinematic bokeh',
       },
     ],
   },
