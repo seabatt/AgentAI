@@ -119,6 +119,13 @@ export async function POST(req: NextRequest) {
   }
 }
 
+const MAX_RETRIES = 3;
+const RETRYABLE_STATUS = new Set([429, 503]);
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function generateWithNanoBananaPro(
   apiKey: string,
   prompt: string,
@@ -132,50 +139,70 @@ async function generateWithNanoBananaPro(
     },
   }));
 
-  const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    signal,
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [
-            { text: prompt },
-            ...imageParts,
-          ],
-        },
-      ],
-      generationConfig: {
-        responseModalities: ['IMAGE'],
-        imageConfig: {
-          aspectRatio: GENERATION_CONFIG.aspectRatio,
-          imageSize: GENERATION_CONFIG.imageSize,
-        },
+  const body = JSON.stringify({
+    contents: [
+      {
+        parts: [
+          { text: prompt },
+          ...imageParts,
+        ],
       },
-    }),
+    ],
+    generationConfig: {
+      responseModalities: ['IMAGE'],
+      imageConfig: {
+        aspectRatio: GENERATION_CONFIG.aspectRatio,
+        imageSize: GENERATION_CONFIG.imageSize,
+      },
+    },
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error(`Gemini API error ${response.status}:`, errorText);
-    return {
-      image: null,
-      error: `Gemini API error (HTTP ${response.status}). ${errorText.trim().slice(0, 300)}`,
-    };
-  }
+  let lastError = '';
 
-  const data = await response.json();
-
-  const parts = data.candidates?.[0]?.content?.parts;
-  if (!parts) return { image: null, error: 'Gemini response missing candidates content parts.' };
-
-  for (const part of parts) {
-    const inline = part.inline_data || part.inlineData;
-    if (inline?.data) {
-      const imgMime = inline.mime_type || inline.mimeType || 'image/png';
-      return { image: `data:${imgMime};base64,${inline.data}`, error: null };
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    if (signal.aborted) {
+      return { image: null, error: 'Request aborted.' };
     }
+
+    if (attempt > 0) {
+      const delayMs = Math.min(2000 * Math.pow(2, attempt - 1), 10_000);
+      console.log(`Gemini retry ${attempt}/${MAX_RETRIES} after ${delayMs}ms...`);
+      await sleep(delayMs);
+    }
+
+    const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal,
+      body,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      lastError = `Gemini API error (HTTP ${response.status}). ${errorText.trim().slice(0, 300)}`;
+      console.error(`Gemini API error ${response.status} (attempt ${attempt + 1}):`, errorText.slice(0, 200));
+
+      if (RETRYABLE_STATUS.has(response.status) && attempt < MAX_RETRIES) {
+        continue;
+      }
+      return { image: null, error: lastError };
+    }
+
+    const data = await response.json();
+
+    const parts = data.candidates?.[0]?.content?.parts;
+    if (!parts) return { image: null, error: 'Gemini response missing candidates content parts.' };
+
+    for (const part of parts) {
+      const inline = part.inline_data || part.inlineData;
+      if (inline?.data) {
+        const imgMime = inline.mime_type || inline.mimeType || 'image/png';
+        return { image: `data:${imgMime};base64,${inline.data}`, error: null };
+      }
+    }
+
+    return { image: null, error: 'Gemini response did not include inline image data.' };
   }
 
-  return { image: null, error: 'Gemini response did not include inline image data.' };
+  return { image: null, error: lastError || 'Max retries exceeded.' };
 }
