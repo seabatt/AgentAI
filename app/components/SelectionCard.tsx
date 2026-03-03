@@ -23,29 +23,29 @@ export function SelectionCard({
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      gap={2}
-      p={4}
+      gap="6px"
+      p="12px"
       borderRadius="12px"
       border="2px solid"
-      borderColor={isSelected ? '#3b82f6' : '#e2e8f0'}
+      borderColor={isSelected ? '#0777e6' : '#e8e6e2'}
       bg={isSelected ? '#eff6ff' : 'white'}
       cursor="pointer"
       transition="all 0.15s ease"
       _hover={{
-        borderColor: isSelected ? '#3b82f6' : '#cbd5e0',
-        bg: isSelected ? '#eff6ff' : '#f8fafc',
+        borderColor: isSelected ? '#0777e6' : '#c4c2be',
+        bg: isSelected ? '#eff6ff' : '#f9f8f6',
       }}
-      minH="80px"
+      minH="76px"
       w="100%"
+      textAlign="center"
     >
-      <Text fontSize="28px" lineHeight="1" m={0}>
+      <Text fontSize="24px" lineHeight="1" m={0}>
         {icon}
       </Text>
       <Text
         fontSize="13px"
         fontWeight={isSelected ? '600' : '500'}
-        color={isSelected ? '#1e40af' : '#334155'}
-        textAlign="center"
+        color={isSelected ? '#0777e6' : '#0a1b22'}
         m={0}
       >
         {label}

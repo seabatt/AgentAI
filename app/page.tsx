@@ -1,14 +1,8 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Box } from '@chakra-ui/react';
-import {
-  AgentAIAgentPage,
-  AgentAIAgentPageSection,
-  AgentAIAlert,
-  AgentAIButton,
-  defaultTheme,
-} from '@agentai/appsdk';
+import { Box, VStack, Text, Flex, Button } from '@chakra-ui/react';
+import { LuCamera } from 'react-icons/lu';
 import { PhotoUpload } from './components/PhotoUpload';
 import { SelectionGrid } from './components/SelectionGrid';
 import { ValidationBanner } from './components/ValidationBanner';
@@ -56,10 +50,7 @@ function resizeImage(file: File): Promise<Blob> {
   });
 }
 
-const AGENT_ICON_DATA_URL =
-  'data:image/svg+xml,%3Csvg%20xmlns=%22http%3A//www.w3.org/2000/svg%22%20width=%2296%22%20height=%2296%22%20viewBox=%220%200%2096%2096%22%3E%3Crect%20x=%228%22%20y=%2222%22%20width=%2280%22%20height=%2256%22%20rx=%2214%22%20fill=%22%23f8fafc%22%20stroke=%22%231A3643%22%20stroke-width=%224%22/%3E%3Cpath%20d=%22M30%2022%20l6-8%20h24%20l6%208%22%20fill=%22none%22%20stroke=%22%231A3643%22%20stroke-width=%224%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/%3E%3Ccircle%20cx=%2248%22%20cy=%2250%22%20r=%2216%22%20fill=%22none%22%20stroke=%22%23D96C4F%22%20stroke-width=%224%22/%3E%3Ccircle%20cx=%2248%22%20cy=%2250%22%20r=%226%22%20fill=%22%23D96C4F%22/%3E%3C/svg%3E';
-
-async function readJsonResponse<T = any>(response: Response): Promise<T> {
+async function readJsonResponse<T = unknown>(response: Response): Promise<T> {
   const contentType = response.headers.get('content-type') || '';
   const isJson = contentType.includes('application/json');
 
@@ -73,6 +64,14 @@ async function readJsonResponse<T = any>(response: Response): Promise<T> {
     `Non-JSON response from /api/generate (HTTP ${response.status}). ${snippet || 'Empty response.'}`
   );
 }
+
+const card = {
+  bg: 'white',
+  borderRadius: '16px',
+  border: '1px solid',
+  borderColor: '#f0eae2',
+  boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+} as const;
 
 export default function HeadshotGenerator() {
   const [appState, setAppState] = useState<AppState>('input');
@@ -157,9 +156,7 @@ export default function HeadshotGenerator() {
         );
       }
 
-      if (
-        data.images.length < GENERATION_CONFIG.variations.min
-      ) {
+      if (data.images.length < GENERATION_CONFIG.variations.min) {
         throw new Error(
           "We couldn't generate your headshots. Please try again or use a different photo."
         );
@@ -185,81 +182,87 @@ export default function HeadshotGenerator() {
   }
 
   return (
-    <AgentAIAgentPage
-      theme={defaultTheme}
-      agentHeaderConfig={{
-        name: 'AI Headshot Generator',
-        icon: AGENT_ICON_DATA_URL,
-        description:
-          'Upload up to 3 selfies. Pick your style. Get professional headshots.',
-        showStats: false,
-        showActions: false,
-        theme: defaultTheme,
-      }}
-      maxWidth="720px"
-    >
-      <AgentAIAgentPageSection spacing={6}>
-        {error && (
-          <AgentAIAlert
-            status="error"
-            title="Something went wrong"
-            description={error}
-          />
-        )}
+    <Box minH="100vh" bg="#faf9f7">
+      <Box flex="1" overflow="auto" display="flex" justifyContent="center" alignItems="flex-start">
+        <Box w="100%" maxW="960px" px="32px" py="40px">
+          <VStack gap="24px" align="stretch">
+            {/* Header */}
+            <VStack gap="8px" align="center" textAlign="center">
+              <Box w="56px" h="56px" borderRadius="full" bg="#eff6ff" display="flex" alignItems="center" justifyContent="center" mx="auto" mb="4px">
+                <LuCamera size={24} color="#0777e6" />
+              </Box>
+              <Text fontSize="32px" fontWeight="700" color="#0a1b22" m={0} lineHeight="1.2">
+                AI Headshot Generator
+              </Text>
+              <Text fontSize="16px" color="#64625e" m={0} lineHeight="1.5" maxW="560px">
+                Upload up to 3 selfies. Pick your style. Get professional headshots.
+              </Text>
+            </VStack>
 
-        {appState === 'input' && (
-          <>
-            <PhotoUpload
-              photos={photos}
-              onAddPhotos={handleAddPhotos}
-              onRemove={handleRemovePhoto}
-            />
-
-            <Box display="flex" flexDirection="column" gap={6}>
-              {HEADSHOT_CATEGORIES.map((category) => (
-                <SelectionGrid
-                  key={category.id}
-                  category={category}
-                  selectedId={selections[category.id] ?? null}
-                  onSelect={(optionId) => handleSelect(category.id, optionId)}
-                />
-              ))}
-            </Box>
-
-            {!isReady && (
-              <ValidationBanner
-                missingCategories={missingCategories}
-                hasPhoto={hasPhotos}
-              />
+            {/* Error banner */}
+            {error && (
+              <Box p="12px 16px" bg="#fef2f2" border="1px solid #fecaca" borderRadius="10px">
+                <Text fontSize="13px" fontWeight="600" color="#991b1b" m={0}>Something went wrong</Text>
+                <Text fontSize="13px" color="#991b1b" m={0} mt="2px">{error}</Text>
+              </Box>
             )}
 
-            <AgentAIButton
-              variant="primary"
-              size="lg"
-              isDisabled={!isReady}
-              onClick={handleGenerate}
-            >
-              Generate headshots
-            </AgentAIButton>
-          </>
-        )}
+            {appState === 'input' && (
+              <Box {...card} p="24px">
+                <VStack gap="20px" align="stretch">
+                  <PhotoUpload
+                    photos={photos}
+                    onAddPhotos={handleAddPhotos}
+                    onRemove={handleRemovePhoto}
+                  />
 
-        {appState === 'generating' && (
-          <ResultsDisplay
-            images={images}
-            isGenerating={true}
-            onStartOver={handleStartOver}
-          />
-        )}
+                  {HEADSHOT_CATEGORIES.map((category) => (
+                    <SelectionGrid
+                      key={category.id}
+                      category={category}
+                      selectedId={selections[category.id] ?? null}
+                      onSelect={(optionId) => handleSelect(category.id, optionId)}
+                    />
+                  ))}
 
-        {appState === 'results' && (
-          <ResultsDisplay
-            images={images}
-            isGenerating={false}
-            onStartOver={handleStartOver}
-          />
-        )}
-      </AgentAIAgentPageSection>
-    </AgentAIAgentPage>
+                  {!isReady && (
+                    <ValidationBanner
+                      missingCategories={missingCategories}
+                      hasPhoto={hasPhotos}
+                    />
+                  )}
+
+                  <Button
+                    onClick={handleGenerate}
+                    disabled={!isReady}
+                    bg="#0777e6"
+                    color="white"
+                    px="28px"
+                    h="46px"
+                    borderRadius="12px"
+                    fontSize="15px"
+                    fontWeight="600"
+                    w="100%"
+                    _hover={{ bg: '#0660b9' }}
+                    _disabled={{ bg: '#c9c4bd', cursor: 'not-allowed' }}
+                    transition="all 0.15s ease"
+                  >
+                    <LuCamera size={16} style={{ marginRight: 8 }} /> Generate Headshots
+                  </Button>
+                </VStack>
+              </Box>
+            )}
+
+            {(appState === 'generating' || appState === 'results') && (
+              <ResultsDisplay
+                images={images}
+                isGenerating={appState === 'generating'}
+                onStartOver={handleStartOver}
+              />
+            )}
+          </VStack>
+        </Box>
+      </Box>
+    </Box>
   );
 }

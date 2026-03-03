@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 import { Box, Text, Image, Flex } from '@chakra-ui/react';
-import { AgentAIButton } from '@agentai/appsdk';
 import { LuX, LuUpload, LuPlus } from 'react-icons/lu';
 
 const MAX_PHOTOS = 3;
@@ -45,7 +44,10 @@ export function PhotoUpload({
 
   if (photos.length === 0) {
     return (
-      <Box mb={6}>
+      <Box>
+        <Text fontSize="13px" fontWeight="600" color="#0a1b22" mb="8px" m={0}>
+          Upload your photos
+        </Text>
         <Box
           as="button"
           onClick={() => inputRef.current?.click()}
@@ -54,21 +56,21 @@ export function PhotoUpload({
           alignItems="center"
           justifyContent="center"
           w="100%"
-          py={12}
-          border="2px dashed #cbd5e0"
+          py="40px"
+          border="2px dashed #e8e6e2"
           borderRadius="12px"
-          bg="#f8fafc"
+          bg="#f9f8f6"
           cursor="pointer"
           transition="all 0.15s ease"
-          _hover={{ borderColor: '#94a3b8', bg: '#f1f5f9' }}
+          _hover={{ borderColor: '#c4c2be', bg: '#f4f2ee' }}
         >
-          <Box color="#94a3b8" mb={3}>
-            <LuUpload size={32} />
+          <Box color="#94928e" mb="8px">
+            <LuUpload size={28} />
           </Box>
-          <Text fontSize="15px" fontWeight="600" color="#334155" m={0}>
+          <Text fontSize="14px" fontWeight="600" color="#0a1b22" m={0}>
             Upload up to {MAX_PHOTOS} photos
           </Text>
-          <Text fontSize="13px" color="#94a3b8" mt={1} m={0}>
+          <Text fontSize="13px" color="#94928e" mt="4px" m={0}>
             More angles = better results. JPEG, PNG, or WebP up to 10 MB each.
           </Text>
         </Box>
@@ -85,38 +87,42 @@ export function PhotoUpload({
   }
 
   return (
-    <Box mb={6}>
-      <Flex gap={3} flexWrap="wrap">
+    <Box>
+      <Text fontSize="13px" fontWeight="600" color="#0a1b22" mb="8px" m={0}>
+        Your photos
+      </Text>
+      <Flex gap="10px" flexWrap="wrap">
         {photos.map((p, i) => (
           <Box key={i} position="relative" flexShrink={0}>
             <Image
               src={p.previewUrl}
               alt={`Photo ${i + 1}`}
-              w="120px"
-              h="120px"
-              borderRadius="10px"
+              w="100px"
+              h="100px"
+              borderRadius="12px"
               objectFit="cover"
-              border="2px solid #e2e8f0"
+              border="2px solid #e8e6e2"
             />
             <Box
               as="button"
               onClick={() => onRemove(i)}
               position="absolute"
-              top={-2}
-              right={-2}
+              top="-6px"
+              right="-6px"
               bg="white"
               borderRadius="full"
-              w="24px"
-              h="24px"
+              w="22px"
+              h="22px"
               display="flex"
               alignItems="center"
               justifyContent="center"
               boxShadow="0 2px 8px rgba(0,0,0,0.15)"
               cursor="pointer"
-              border="1px solid #e2e8f0"
-              _hover={{ bg: '#f1f5f9' }}
+              border="1px solid #e8e6e2"
+              _hover={{ bg: '#f4f2ee' }}
+              transition="all 0.15s ease"
             >
-              <LuX size={12} />
+              <LuX size={11} />
             </Box>
           </Box>
         ))}
@@ -125,30 +131,30 @@ export function PhotoUpload({
           <Box
             as="button"
             onClick={() => inputRef.current?.click()}
-            w="120px"
-            h="120px"
-            borderRadius="10px"
-            border="2px dashed #cbd5e0"
-            bg="#f8fafc"
+            w="100px"
+            h="100px"
+            borderRadius="12px"
+            border="2px dashed #e8e6e2"
+            bg="#f9f8f6"
             display="flex"
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
             cursor="pointer"
             transition="all 0.15s ease"
-            _hover={{ borderColor: '#94a3b8', bg: '#f1f5f9' }}
+            _hover={{ borderColor: '#c4c2be', bg: '#f4f2ee' }}
           >
-            <Box color="#94a3b8" mb={1}>
-              <LuPlus size={20} />
+            <Box color="#94928e" mb="2px">
+              <LuPlus size={18} />
             </Box>
-            <Text fontSize="11px" color="#94a3b8" m={0}>
+            <Text fontSize="11px" color="#94928e" m={0}>
               Add photo
             </Text>
           </Box>
         )}
       </Flex>
 
-      <Text fontSize="12px" color="#94a3b8" mt={2} m={0}>
+      <Text fontSize="12px" color="#94928e" mt="6px" m={0}>
         {photos.length} of {MAX_PHOTOS} photos &mdash; more angles help with likeness
       </Text>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { AgentAIAlert } from '@agentai/appsdk';
+import { Box, Text } from '@chakra-ui/react';
 
 interface ValidationBannerProps {
   missingCategories: string[];
@@ -22,10 +22,18 @@ export function ValidationBanner({
   }
 
   return (
-    <AgentAIAlert
-      status="auth"
-      title="Almost there"
-      description={message}
-    />
+    <Box
+      p="12px 16px"
+      bg="#fef3c7"
+      border="1px solid #fde68a"
+      borderRadius="10px"
+    >
+      <Text fontSize="13px" fontWeight="600" color="#92400e" m={0}>
+        Almost there
+      </Text>
+      <Text fontSize="13px" color="#92400e" m={0} mt="2px">
+        {message}
+      </Text>
+    </Box>
   );
 }
