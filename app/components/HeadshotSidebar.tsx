@@ -1,7 +1,7 @@
 'use client';
 
-import { VStack, Box, Text, HStack, Image } from '@chakra-ui/react';
-import { LuClock, LuCamera, LuTrash2 } from 'react-icons/lu';
+import { VStack, Box, Text, HStack } from '@chakra-ui/react';
+import { LuClock, LuCamera, LuSparkles, LuTrash2 } from 'react-icons/lu';
 import type { HeadshotSession } from '@/lib/session-store';
 
 interface HeadshotSidebarProps {
@@ -45,73 +45,95 @@ export function HeadshotSidebar({
       align="stretch"
       gap="0"
       h="100vh"
-      w="280px"
+      w="260px"
       flexShrink={0}
-      bg="white"
-      borderRight="1px solid #e2e0dc"
+      bg="#faf9f7"
+      borderRight="1px solid #e8e6e2"
       overflow="hidden"
       position="sticky"
       top={0}
     >
-      {/* Header */}
-      <HStack
-        justify="space-between"
-        px="16px"
-        py="12px"
-        borderBottom="1px solid #e2e0dc"
-      >
-        <HStack gap="6px">
-          <LuClock size={14} color="#94928e" />
-          <Text
-            fontSize="11px"
-            fontWeight="600"
-            color="#94928e"
-            letterSpacing="0.5px"
-            textTransform="uppercase"
-            m={0}
-          >
-            History
-          </Text>
-        </HStack>
-        {sessions.length > 0 && (
+      {/* Agent header */}
+      <Box px="20px" pt="20px" pb="16px">
+        <HStack gap="10px" align="start">
           <Box
-            bg="#f4f2ee"
-            borderRadius="full"
-            px="8px"
-            py="2px"
-            fontSize="11px"
-            fontWeight="600"
-            color="#94928e"
+            w="36px"
+            h="36px"
+            borderRadius="10px"
+            bg="#eff6ff"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            flexShrink={0}
           >
-            {sessions.length}
+            <LuCamera size={18} color="#0777e6" />
           </Box>
-        )}
-      </HStack>
+          <VStack align="start" gap="2px">
+            <Text fontSize="14px" fontWeight="700" color="#0a1b22" m={0} lineHeight="1.3">
+              AI Headshot Generator
+            </Text>
+            <Text fontSize="12px" color="#94928e" m={0} lineHeight="1.4">
+              Upload selfies. Pick a style. Get headshots.
+            </Text>
+          </VStack>
+        </HStack>
+      </Box>
 
-      {/* New headshot button */}
-      <Box px="12px" py="10px" borderBottom="1px solid #f0eae2">
+      {/* Action links */}
+      <VStack align="stretch" gap="0" px="12px" pb="12px">
         <Box
           as="button"
-          w="full"
-          py="10px"
-          px="14px"
-          bg="#0777e6"
-          color="white"
-          borderRadius="10px"
-          border="none"
-          cursor="pointer"
-          fontSize="13px"
-          fontWeight="600"
           display="flex"
           alignItems="center"
-          justifyContent="center"
-          gap="6px"
-          transition="all 0.15s ease"
-          _hover={{ bg: '#0660b9' }}
+          gap="10px"
+          w="full"
+          py="10px"
+          px="10px"
+          bg="transparent"
+          border="none"
+          borderRadius="8px"
+          cursor="pointer"
+          transition="background 0.1s"
+          _hover={{ bg: '#f0eae2' }}
           onClick={onNewSession}
+          textAlign="left"
         >
-          <LuCamera size={14} />
-          New Headshot
+          <LuSparkles size={16} color="#0a1b22" />
+          <Text fontSize="14px" fontWeight="500" color="#0a1b22" m={0}>
+            New Headshot
+          </Text>
+        </Box>
+      </VStack>
+
+      {/* History tab header */}
+      <Box px="12px" pb="4px">
+        <Box
+          display="inline-flex"
+          alignItems="center"
+          gap="6px"
+          bg="#eae7e1"
+          borderRadius="8px"
+          px="12px"
+          py="6px"
+        >
+          <LuClock size={12} color="#64625e" />
+          <Text fontSize="12px" fontWeight="600" color="#64625e" m={0}>
+            History
+          </Text>
+          {sessions.length > 0 && (
+            <Box
+              bg="white"
+              borderRadius="full"
+              px="6px"
+              py="1px"
+              fontSize="11px"
+              fontWeight="600"
+              color="#64625e"
+              lineHeight="14px"
+            >
+              {sessions.length}
+            </Box>
+          )}
         </Box>
       </Box>
 
@@ -119,6 +141,8 @@ export function HeadshotSidebar({
       <Box
         flex="1"
         overflowY="auto"
+        px="8px"
+        pt="4px"
         css={{
           '&::-webkit-scrollbar': { width: '6px' },
           '&::-webkit-scrollbar-track': { background: 'transparent' },
@@ -130,13 +154,13 @@ export function HeadshotSidebar({
         }}
       >
         {sessions.length === 0 ? (
-          <Box px="16px" py="24px">
+          <Box px="12px" py="24px">
             <Text fontSize="13px" color="#94928e" textAlign="center" m={0}>
               No headshots yet.
             </Text>
           </Box>
         ) : (
-          <VStack align="stretch" gap="0" py="4px">
+          <VStack align="stretch" gap="2px">
             {sessions.map((session) => {
               const dateStr = formatShortDate(session.createdAt);
               const isActive = session.id === activeSessionId;
@@ -146,15 +170,14 @@ export function HeadshotSidebar({
                   key={session.id}
                   as="button"
                   w="full"
-                  mb="2px"
                   py="10px"
                   px="12px"
-                  bg={isActive ? '#f4f2ee' : 'transparent'}
+                  bg={isActive ? '#f0eae2' : 'transparent'}
                   borderRadius="8px"
                   cursor="pointer"
                   textAlign="left"
                   transition="background 0.1s"
-                  _hover={{ bg: '#F4F2EE' }}
+                  _hover={{ bg: '#F0EAE2' }}
                   onClick={() => onViewSession(session.id)}
                   border="none"
                   display="flex"
@@ -163,32 +186,14 @@ export function HeadshotSidebar({
                   position="relative"
                   role="group"
                 >
-                  {/* Thumbnail */}
-                  {session.thumbnails[0] ? (
-                    <Image
-                      src={session.thumbnails[0]}
-                      alt=""
-                      w="36px"
-                      h="36px"
-                      borderRadius="8px"
-                      objectFit="cover"
-                      flexShrink={0}
-                      border="1px solid #e8e6e2"
-                    />
-                  ) : (
-                    <Box
-                      w="36px"
-                      h="36px"
-                      borderRadius="8px"
-                      bg="#f4f2ee"
-                      flexShrink={0}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <LuCamera size={14} color="#94928e" />
-                    </Box>
-                  )}
+                  {/* Left indicator dot */}
+                  <Box
+                    w="6px"
+                    h="6px"
+                    borderRadius="full"
+                    bg={isActive ? '#0777e6' : '#c9c4bd'}
+                    flexShrink={0}
+                  />
 
                   {/* Info */}
                   <VStack align="start" gap="2px" flex="1" overflow="hidden">
@@ -203,27 +208,20 @@ export function HeadshotSidebar({
                     >
                       {session.styleName}
                     </Text>
-                    <HStack gap="6px">
-                      {dateStr && (
-                        <Text
-                          fontSize="11px"
-                          color="#94928e"
-                          m={0}
-                          whiteSpace="nowrap"
-                        >
-                          {dateStr}
-                        </Text>
-                      )}
-                      <Text fontSize="11px" color="#94928e" m={0}>
-                        {session.imageCount} {session.imageCount === 1 ? 'image' : 'images'}
-                      </Text>
-                    </HStack>
+                    <Text
+                      fontSize="11px"
+                      color="#94928e"
+                      m={0}
+                      whiteSpace="nowrap"
+                    >
+                      {dateStr}
+                    </Text>
                   </VStack>
 
                   {/* Delete button (visible on hover) */}
                   <Box
                     position="absolute"
-                    right="10px"
+                    right="8px"
                     top="50%"
                     transform="translateY(-50%)"
                     opacity={0}
@@ -236,21 +234,28 @@ export function HeadshotSidebar({
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
-                    w="24px"
-                    h="24px"
-                    borderRadius="6px"
+                    w="22px"
+                    h="22px"
+                    borderRadius="5px"
                     bg="white"
                     border="1px solid #e8e6e2"
                     cursor="pointer"
                     _hover={{ bg: '#fef2f2', borderColor: '#fecaca' }}
                   >
-                    <LuTrash2 size={12} color="#94928e" />
+                    <LuTrash2 size={11} color="#94928e" />
                   </Box>
                 </Box>
               );
             })}
           </VStack>
         )}
+      </Box>
+
+      {/* Footer */}
+      <Box px="16px" py="12px" borderTop="1px solid #f0eae2">
+        <Text fontSize="11px" color="#c9c4bd" m={0}>
+          Made with Agent.ai
+        </Text>
       </Box>
     </VStack>
   );

@@ -261,22 +261,29 @@ export default function HeadshotGenerator() {
         onNewSession={handleNewSession}
       />
 
-      {/* Main content */}
-      <Box flex="1" overflow="auto" display="flex" justifyContent="center" alignItems="flex-start">
-        <Box w="100%" maxW="960px" px="32px" py="40px">
-          <VStack gap="24px" align="stretch">
-            {/* Header */}
-            <VStack gap="8px" align="center" textAlign="center">
-              <Box w="56px" h="56px" borderRadius="full" bg="#eff6ff" display="flex" alignItems="center" justifyContent="center" mx="auto" mb="4px">
-                <LuCamera size={24} color="#0777e6" />
-              </Box>
-              <Text fontSize="32px" fontWeight="700" color="#0a1b22" m={0} lineHeight="1.2">
-                AI Headshot Generator
-              </Text>
-              <Text fontSize="16px" color="#64625e" m={0} lineHeight="1.5" maxW="560px">
-                Upload up to 3 selfies. Pick your style. Get professional headshots.
-              </Text>
-            </VStack>
+      {/* Main content pane */}
+      <Box flex="1" minW="0" p={{ base: '0', lg: '16px' }} overflow="auto">
+        <Box
+          bg="white"
+          borderRadius={{ base: '0', lg: '30px' }}
+          boxShadow="0px 5px 20px 0px rgba(0,0,0,0.05)"
+          minH={{ base: '100vh', lg: 'calc(100vh - 32px)' }}
+          display="flex"
+          flexDirection="column"
+          overflow="hidden"
+        >
+          <Box flex="1" display="flex" justifyContent="center" alignItems="flex-start" overflow="auto">
+            <Box w="100%" maxW="960px" px="32px" py="40px">
+              <VStack gap="24px" align="stretch">
+                {/* Header */}
+                <VStack gap="8px" align="center" textAlign="center">
+                  <Text fontSize="32px" fontWeight="700" color="#0a1b22" m={0} lineHeight="1.2">
+                    AI Headshot Generator
+                  </Text>
+                  <Text fontSize="16px" color="#64625e" m={0} lineHeight="1.5" maxW="560px">
+                    Upload up to 3 selfies. Pick your style. Get professional headshots.
+                  </Text>
+                </VStack>
 
             {/* Error banner */}
             {error && (
@@ -339,7 +346,9 @@ export default function HeadshotGenerator() {
                 onStartOver={handleStartOver}
               />
             )}
-          </VStack>
+              </VStack>
+            </Box>
+          </Box>
         </Box>
       </Box>
     </Flex>
