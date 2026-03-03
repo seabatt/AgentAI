@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Box, VStack, Text, Flex, Button } from '@chakra-ui/react';
 import { LuCamera } from 'react-icons/lu';
 import { PhotoUpload } from './components/PhotoUpload';
 import { SelectionGrid } from './components/SelectionGrid';
 import { ValidationBanner } from './components/ValidationBanner';
 import { ResultsDisplay } from './components/ResultsDisplay';
+import { HeadshotSidebar } from './components/HeadshotSidebar';
 import {
   HEADSHOT_CATEGORIES,
   getMissingCategories,
@@ -14,11 +15,19 @@ import {
 } from '@/lib/headshot-config';
 import { GENERATION_CONFIG } from '@/lib/generation-config';
 import { buildVariationPrompts } from '@/lib/prompt-builder';
+import {
+  getSessions,
+  saveSession,
+  deleteSession,
+  getSessionById,
+  type HeadshotSession,
+} from '@/lib/session-store';
 
 type AppState = 'input' | 'generating' | 'results';
 
 const MAX_REF_DIM = 1024;
 const JPEG_QUALITY = 0.85;
+const THUMB_DIM = 80;
 
 function resizeImage(file: File): Promise<Blob> {
   return new Promise((resolve, reject) => {
@@ -50,6 +59,25 @@ function resizeImage(file: File): Promise<Blob> {
   });
 }
 
+function makeThumbnail(dataUrl: string): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = THUMB_DIM;
+      canvas.height = THUMB_DIM;
+      const ctx = canvas.getContext('2d')!;
+      const size = Math.min(img.width, img.height);
+      const sx = (img.width - size) / 2;
+      const sy = (img.height - size) / 2;
+      ctx.drawImage(img, sx, sy, size, size, 0, 0, THUMB_DIM, THUMB_DIM);
+      resolve(canvas.toDataURL('image/jpeg', 0.6));
+    };
+    img.onerror = () => resolve('');
+    img.src = dataUrl;
+  });
+}
+
 async function readJsonResponse<T = unknown>(response: Response): Promise<T> {
   const contentType = response.headers.get('content-type') || '';
   const isJson = contentType.includes('application/json');
@@ -75,14 +103,17 @@ const card = {
 
 export default function HeadshotGenerator() {
   const [appState, setAppState] = useState<AppState>('input');
-  const [photos, setPhotos] = useState<{ file: File; previewUrl: string }[]>(
-    []
-  );
-  const [selections, setSelections] = useState<Record<string, string | null>>(
-    {}
-  );
+  const [photos, setPhotos] = useState<{ file: File; previewUrl: string }[]>([]);
+  const [selections, setSelections] = useState<Record<string, string | null>>({});
   const [images, setImages] = useState<(string | null)[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  const [sessions, setSessions] = useState<HeadshotSession[]>([]);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSessions(getSessions());
+  }, []);
 
   const missingCategories = getMissingCategories(selections);
   const hasPhotos = photos.length > 0;
@@ -105,13 +136,16 @@ export default function HeadshotGenerator() {
     });
   }
 
-  function handleClearPhotos() {
-    for (const p of photos) URL.revokeObjectURL(p.previewUrl);
-    setPhotos([]);
-  }
-
   function handleSelect(categoryId: string, optionId: string) {
     setSelections((prev) => ({ ...prev, [categoryId]: optionId }));
+  }
+
+  function getSelectedStyleName(): string {
+    const styleId = selections['style'];
+    if (!styleId) return 'Headshot';
+    const cat = HEADSHOT_CATEGORIES.find((c) => c.id === 'style');
+    const opt = cat?.options.find((o) => o.id === styleId);
+    return opt?.label ?? 'Headshot';
   }
 
   const handleGenerate = useCallback(async () => {
@@ -119,6 +153,7 @@ export default function HeadshotGenerator() {
 
     setAppState('generating');
     setError(null);
+    setActiveSessionId(null);
 
     const validSelections = selections as Record<string, string>;
     const prompts = buildVariationPrompts(validSelections);
@@ -145,44 +180,88 @@ export default function HeadshotGenerator() {
       }>(response);
 
       if (!data.success) {
-        throw new Error(
-          data.error || 'Generation failed. Please try again.'
-        );
+        throw new Error(data.error || 'Generation failed. Please try again.');
       }
 
       if (!Array.isArray(data.images)) {
-        throw new Error(
-          'Generation failed: server returned an invalid response shape (missing images array).'
-        );
+        throw new Error('Generation failed: server returned an invalid response shape.');
       }
 
       if (data.images.length < GENERATION_CONFIG.variations.min) {
-        throw new Error(
-          "We couldn't generate your headshots. Please try again or use a different photo."
-        );
+        throw new Error("We couldn't generate your headshots. Please try again or use a different photo.");
       }
 
       setImages(data.images);
       setAppState('results');
+
+      const thumbs = await Promise.all(
+        data.images.slice(0, 3).map((img) => makeThumbnail(img))
+      );
+
+      const saved = saveSession({
+        styleName: getSelectedStyleName(),
+        styleId: validSelections['style'] ?? '',
+        thumbnails: thumbs.filter(Boolean),
+        imageCount: data.images.length,
+      });
+      setActiveSessionId(saved.id);
+      setSessions(getSessions());
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : 'Something went wrong. Please try again.'
+        err instanceof Error ? err.message : 'Something went wrong. Please try again.'
       );
       setAppState('input');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [photos, hasPhotos, isReady, selections]);
 
   function handleStartOver() {
     setSelections({});
     setImages([]);
     setError(null);
+    setActiveSessionId(null);
     setAppState('input');
   }
 
+  function handleNewSession() {
+    for (const p of photos) URL.revokeObjectURL(p.previewUrl);
+    setPhotos([]);
+    setSelections({});
+    setImages([]);
+    setError(null);
+    setActiveSessionId(null);
+    setAppState('input');
+  }
+
+  function handleViewSession(id: string) {
+    const session = getSessionById(id);
+    if (!session) return;
+    setActiveSessionId(id);
+    setImages(session.thumbnails);
+    setAppState('results');
+    setError(null);
+  }
+
+  function handleDeleteSession(id: string) {
+    deleteSession(id);
+    setSessions(getSessions());
+    if (activeSessionId === id) {
+      handleNewSession();
+    }
+  }
+
   return (
-    <Box minH="100vh" bg="#faf9f7">
+    <Flex minH="100vh" bg="#faf9f7">
+      {/* Sidebar */}
+      <HeadshotSidebar
+        sessions={sessions}
+        activeSessionId={activeSessionId}
+        onViewSession={handleViewSession}
+        onDeleteSession={handleDeleteSession}
+        onNewSession={handleNewSession}
+      />
+
+      {/* Main content */}
       <Box flex="1" overflow="auto" display="flex" justifyContent="center" alignItems="flex-start">
         <Box w="100%" maxW="960px" px="32px" py="40px">
           <VStack gap="24px" align="stretch">
@@ -263,6 +342,6 @@ export default function HeadshotGenerator() {
           </VStack>
         </Box>
       </Box>
-    </Box>
+    </Flex>
   );
 }
