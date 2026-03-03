@@ -16,11 +16,15 @@ export function buildBasePrompt(
     .filter(Boolean);
 
   return [
-    'Professional headshot photograph of the person in the reference image',
+    'Generate a new photograph of the exact same person shown in the attached reference photo(s).',
+    'Preserve their face shape, skin tone, eye color, hair color, hair style, and all distinguishing features precisely.',
+    'The output must look like the same real individual, not a similar-looking person.',
+    '',
+    'Style:',
     ...fragments,
-    'sharp focus, shallow depth of field, professional photography',
-    'high resolution, 8k',
-  ].join(', ');
+    '',
+    'Technical: head-and-shoulders framing, sharp focus on eyes, shallow depth of field, photorealistic, no artifacts, no distortion.',
+  ].join('\n');
 }
 
 export function buildVariationPrompts(
@@ -28,6 +32,6 @@ export function buildVariationPrompts(
 ): string[] {
   const base = buildBasePrompt(selections);
   return VARIATION_MODIFIERS.map(
-    (modifier) => `${base}, ${modifier}`
+    (modifier) => `${base}\n\nPose & lighting: ${modifier}`
   );
 }

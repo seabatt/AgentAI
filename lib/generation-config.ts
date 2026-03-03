@@ -11,7 +11,7 @@ export const GENERATION_CONFIG = {
 } as const;
 
 export const VARIATION_MODIFIERS = [
-  'straight-on angle, centered composition, even studio lighting',
-  'slight three-quarter turn, soft directional light from the left, subtle depth',
-  'gentle head tilt, Rembrandt-style lighting, warm tone, gentle bokeh',
+  'Looking straight at the camera, centered composition, soft even lighting from both sides, neutral expression or slight smile.',
+  'Slight three-quarter turn to the left, soft directional key light from the right, natural relaxed expression.',
+  'Gentle head tilt, warm Rembrandt-style lighting from above-left, confident genuine smile, subtle background bokeh.',
 ] as const;
