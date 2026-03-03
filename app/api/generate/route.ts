@@ -11,8 +11,8 @@ type GenerateResult = { image: string | null; error: string | null };
 
 type ReferenceImage = { base64: string; mimeType: string };
 
-const SOFT_TIME_BUDGET_MS = 50_000;
-const PER_REQUEST_TIMEOUT_MS = 45_000;
+const SOFT_TIME_BUDGET_MS = 150_000;
+const PER_REQUEST_TIMEOUT_MS = 120_000;
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -119,11 +119,15 @@ export async function POST(req: NextRequest) {
   }
 }
 
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 5;
 const RETRYABLE_STATUS = new Set([429, 503]);
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function jitteredDelay(baseMs: number): number {
+  return baseMs + Math.random() * baseMs * 0.5;
 }
 
 async function generateWithNanoBananaPro(
@@ -165,7 +169,8 @@ async function generateWithNanoBananaPro(
     }
 
     if (attempt > 0) {
-      const delayMs = Math.min(2000 * Math.pow(2, attempt - 1), 10_000);
+      const baseDelay = Math.min(3000 * Math.pow(2, attempt - 1), 30_000);
+      const delayMs = Math.round(jitteredDelay(baseDelay));
       console.log(`Gemini retry ${attempt}/${MAX_RETRIES} after ${delayMs}ms...`);
       await sleep(delayMs);
     }
