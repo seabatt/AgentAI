@@ -70,7 +70,7 @@ export function HeadshotSidebar({
           </Box>
           <VStack align="start" gap="2px">
             <Text fontSize="14px" fontWeight="700" color="#0a1b22" m={0} lineHeight="1.3">
-              AI Headshot Generator
+              Instant Headshot Generator
             </Text>
             <Text fontSize="12px" color="#94928e" m={0} lineHeight="1.4">
               Upload selfies. Pick a style. Get headshots.

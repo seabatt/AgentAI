@@ -283,10 +283,10 @@ export default function HeadshotGenerator() {
                 {/* Header */}
                 <VStack gap="8px" align="center" textAlign="center">
                   <Text fontSize="32px" fontWeight="700" color="#0a1b22" m={0} lineHeight="1.2">
-                    AI Headshot Generator
+                    Instant Headshot Generator
                   </Text>
                   <Text fontSize="16px" color="#64625e" m={0} lineHeight="1.5" maxW="560px">
-                    Upload up to 3 selfies. Pick your style. Get professional headshots.
+                    Upload up to 3 selfies, pick your style, get your headshot. It&apos;s that easy.
                   </Text>
                 </VStack>
 
