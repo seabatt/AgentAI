@@ -7,6 +7,7 @@ import { LuCheck, LuDownload, LuRotateCcw } from 'react-icons/lu';
 interface ResultsDisplayProps {
   images: (string | null)[];
   isGenerating: boolean;
+  isHistoryView?: boolean;
   onStartOver: () => void;
 }
 
@@ -21,6 +22,7 @@ const card = {
 export function ResultsDisplay({
   images,
   isGenerating,
+  isHistoryView = false,
   onStartOver,
 }: ResultsDisplayProps) {
   const completedImages = images.filter((img): img is string => img !== null);
@@ -103,8 +105,14 @@ export function ResultsDisplay({
     <Box {...card} p="24px">
       {/* Success banner */}
       <Box bg="#eff6ff" borderLeft="4px solid #0777e6" borderRadius="0 10px 10px 0" p="12px 16px" mb="20px">
-        <Text fontSize="13px" fontWeight="700" color="#0777e6" m={0}>HEADSHOTS READY</Text>
-        <Text fontSize="14px" color="#374151" m={0} mt="2px">Tap to select which ones to download</Text>
+        <Text fontSize="13px" fontWeight="700" color="#0777e6" m={0}>
+          {isHistoryView ? 'PREVIOUS SESSION' : 'HEADSHOTS READY'}
+        </Text>
+        <Text fontSize="14px" color="#374151" m={0} mt="2px">
+          {isHistoryView
+            ? 'These are preview thumbnails. Generate again to download full-resolution images.'
+            : 'Tap to select which ones to download'}
+        </Text>
       </Box>
 
       <SimpleGrid columns={{ base: 1, md: 3 }} gap="12px" mb="20px">
@@ -181,28 +189,30 @@ export function ResultsDisplay({
       </SimpleGrid>
 
       <Flex direction="column" gap="10px">
-        <Button
-          onClick={handleDownload}
-          disabled={selectedCount === 0}
-          bg="#0777e6"
-          color="white"
-          px="28px"
-          h="46px"
-          borderRadius="12px"
-          fontSize="15px"
-          fontWeight="600"
-          w="100%"
-          _hover={{ bg: '#0660b9' }}
-          _disabled={{ bg: '#c9c4bd', cursor: 'not-allowed' }}
-          transition="all 0.15s ease"
-        >
-          <LuDownload size={16} style={{ marginRight: 8 }} />
-          {selectedCount === 0
-            ? 'Select images to download'
-            : selectedCount === 1
-              ? 'Download 1 image'
-              : `Download ${selectedCount} images`}
-        </Button>
+        {!isHistoryView && (
+          <Button
+            onClick={handleDownload}
+            disabled={selectedCount === 0}
+            bg="#0777e6"
+            color="white"
+            px="28px"
+            h="46px"
+            borderRadius="12px"
+            fontSize="15px"
+            fontWeight="600"
+            w="100%"
+            _hover={{ bg: '#0660b9' }}
+            _disabled={{ bg: '#c9c4bd', cursor: 'not-allowed' }}
+            transition="all 0.15s ease"
+          >
+            <LuDownload size={16} style={{ marginRight: 8 }} />
+            {selectedCount === 0
+              ? 'Select images to download'
+              : selectedCount === 1
+                ? 'Download 1 image'
+                : `Download ${selectedCount} images`}
+          </Button>
+        )}
         <Button
           onClick={onStartOver}
           variant="outline"
@@ -217,7 +227,8 @@ export function ResultsDisplay({
           _hover={{ bg: '#f4f2ee', color: '#0a1b22' }}
           transition="all 0.15s ease"
         >
-          <LuRotateCcw size={14} style={{ marginRight: 6 }} /> Try a different style
+          <LuRotateCcw size={14} style={{ marginRight: 6 }} />
+          {isHistoryView ? 'Generate new headshots' : 'Try a different style'}
         </Button>
       </Flex>
     </Box>

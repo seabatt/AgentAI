@@ -110,6 +110,7 @@ export default function HeadshotGenerator() {
 
   const [sessions, setSessions] = useState<HeadshotSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [historyView, setHistoryView] = useState(false);
 
   useEffect(() => {
     setSessions(getSessions());
@@ -154,6 +155,7 @@ export default function HeadshotGenerator() {
     setAppState('generating');
     setError(null);
     setActiveSessionId(null);
+    setHistoryView(false);
 
     const validSelections = selections as Record<string, string>;
     const prompts = buildVariationPrompts(validSelections);
@@ -225,6 +227,7 @@ export default function HeadshotGenerator() {
     setImages([]);
     setError(null);
     setActiveSessionId(null);
+    setHistoryView(false);
     setAppState('input');
   }
 
@@ -235,6 +238,7 @@ export default function HeadshotGenerator() {
     setImages([]);
     setError(null);
     setActiveSessionId(null);
+    setHistoryView(false);
     setAppState('input');
   }
 
@@ -244,6 +248,7 @@ export default function HeadshotGenerator() {
     setActiveSessionId(id);
     setImages(session.thumbnails);
     setAppState('results');
+    setHistoryView(true);
     setError(null);
   }
 
@@ -354,6 +359,7 @@ export default function HeadshotGenerator() {
               <ResultsDisplay
                 images={images}
                 isGenerating={appState === 'generating'}
+                isHistoryView={historyView}
                 onStartOver={handleStartOver}
               />
             )}
