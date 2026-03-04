@@ -23,7 +23,7 @@ export function buildBasePrompt(
     'Style:',
     ...fragments,
     '',
-    'Technical: head-and-shoulders framing, sharp focus on eyes, shallow depth of field, photorealistic, no artifacts, no distortion.',
+    'Technical: head-and-shoulders framing, sharp focus on eyes, shallow depth of field, photorealistic, ultra high resolution, fine skin detail, no artifacts, no distortion, no blur.',
   ].join('\n');
 }
 

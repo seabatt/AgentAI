@@ -3,7 +3,7 @@ export const GENERATION_CONFIG = {
   provider: 'google-gemini' as const,
   style: 'photo' as const,
   aspectRatio: '1:1' as const,
-  imageSize: '2K' as const,
+  outputMimeType: 'image/png' as const,
   variations: {
     min: 1,
     ideal: 3,
