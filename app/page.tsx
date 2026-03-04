@@ -177,6 +177,7 @@ export default function HeadshotGenerator() {
         success: boolean;
         images?: string[];
         error?: string;
+        blockedCount?: number;
       }>(response);
 
       if (!data.success) {
@@ -193,6 +194,10 @@ export default function HeadshotGenerator() {
 
       setImages(data.images);
       setAppState('results');
+
+      if (data.blockedCount && data.blockedCount > 0) {
+        setError(`${data.blockedCount} image(s) were removed by our safety review. The remaining images passed all checks.`);
+      }
 
       const thumbs = await Promise.all(
         data.images.slice(0, 3).map((img) => makeThumbnail(img))
@@ -285,11 +290,17 @@ export default function HeadshotGenerator() {
                   </Text>
                 </VStack>
 
-            {/* Error banner */}
-            {error && (
+            {/* Error / moderation banner */}
+            {error && appState !== 'results' && (
               <Box p="12px 16px" bg="#fef2f2" border="1px solid #fecaca" borderRadius="10px">
                 <Text fontSize="13px" fontWeight="600" color="#991b1b" m={0}>Something went wrong</Text>
                 <Text fontSize="13px" color="#991b1b" m={0} mt="2px">{error}</Text>
+              </Box>
+            )}
+            {error && appState === 'results' && (
+              <Box p="12px 16px" bg="#fef3c7" border="1px solid #fde68a" borderRadius="10px">
+                <Text fontSize="13px" fontWeight="600" color="#92400e" m={0}>Safety review</Text>
+                <Text fontSize="13px" color="#92400e" m={0} mt="2px">{error}</Text>
               </Box>
             )}
 
