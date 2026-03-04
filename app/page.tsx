@@ -22,6 +22,11 @@ import {
   getSessionById,
   type HeadshotSession,
 } from '@/lib/session-store';
+import {
+  saveImages,
+  loadImages,
+  deleteImages,
+} from '@/lib/image-store';
 
 type AppState = 'input' | 'generating' | 'results';
 
@@ -211,6 +216,7 @@ export default function HeadshotGenerator() {
         thumbnails: thumbs.filter(Boolean),
         imageCount: data.images.length,
       });
+      await saveImages(saved.id, data.images);
       setActiveSessionId(saved.id);
       setSessions(getSessions());
     } catch (err) {
@@ -242,18 +248,26 @@ export default function HeadshotGenerator() {
     setAppState('input');
   }
 
-  function handleViewSession(id: string) {
+  async function handleViewSession(id: string) {
     const session = getSessionById(id);
     if (!session) return;
     setActiveSessionId(id);
-    setImages(session.thumbnails);
     setAppState('results');
-    setHistoryView(true);
     setError(null);
+
+    const fullImages = await loadImages(id);
+    if (fullImages && fullImages.length > 0) {
+      setImages(fullImages);
+      setHistoryView(false);
+    } else {
+      setImages(session.thumbnails);
+      setHistoryView(true);
+    }
   }
 
-  function handleDeleteSession(id: string) {
+  async function handleDeleteSession(id: string) {
     deleteSession(id);
+    await deleteImages(id);
     setSessions(getSessions());
     if (activeSessionId === id) {
       handleNewSession();
