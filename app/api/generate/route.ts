@@ -156,7 +156,7 @@ async function generateWithNanoBananaPro(
       responseModalities: ['IMAGE', 'TEXT'],
       imageConfig: {
         aspectRatio: GENERATION_CONFIG.aspectRatio,
-        outputMimeType: GENERATION_CONFIG.outputMimeType,
+        imageSize: GENERATION_CONFIG.imageSize,
       },
     },
   });
